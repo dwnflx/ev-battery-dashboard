@@ -1,0 +1,210 @@
+mineral,year,scenario,demand
+Copper,2022,Stated policies,373.331
+Cobalt,2022,Stated policies,64.5606
+Graphite,2022,Stated policies,557.201
+Lithium,2022,Stated policies,69.739
+Manganese,2022,Stated policies,75.3696
+Nickel,2022,Stated policies,325.831
+Silicon,2022,Stated policies,8.69982
+Neodymium,2022,Stated policies,3.96194
+Dysprosium,2022,Stated policies,0.412567
+Praseodymium,2022,Stated policies,0.594292
+Terbium,2022,Stated policies,0.0806063
+Copper,2025,Stated policies,579.785
+Cobalt,2025,Stated policies,66.3701
+Graphite,2025,Stated policies,935.667
+Lithium,2025,Stated policies,123.04
+Manganese,2025,Stated policies,57.8919
+Nickel,2025,Stated policies,613.862
+Silicon,2025,Stated policies,40.4972
+Neodymium,2025,Stated policies,7.25404
+Dysprosium,2025,Stated policies,0.741466
+Praseodymium,2025,Stated policies,1.08811
+Terbium,2025,Stated policies,0.148403
+Copper,2030,Stated policies,1044.14
+Cobalt,2030,Stated policies,73.9374
+Graphite,2030,Stated policies,1590.25
+Lithium,2030,Stated policies,228.013
+Manganese,2030,Stated policies,152.357
+Nickel,2030,Stated policies,988.053
+Silicon,2030,Stated policies,138.516
+Neodymium,2030,Stated policies,12.2162
+Dysprosium,2030,Stated policies,1.20638
+Praseodymium,2030,Stated policies,1.83243
+Terbium,2030,Stated policies,0.252407
+Copper,2035,Stated policies,1219.21
+Cobalt,2035,Stated policies,77.6728
+Graphite,2035,Stated policies,1781.78
+Lithium,2035,Stated policies,325.354
+Manganese,2035,Stated policies,298.058
+Nickel,2035,Stated policies,1214.57
+Silicon,2035,Stated policies,224.223
+Neodymium,2035,Stated policies,15.1311
+Dysprosium,2035,Stated policies,1.47787
+Praseodymium,2035,Stated policies,2.26967
+Terbium,2035,Stated policies,0.313597
+Copper,2040,Stated policies,1421.16
+Cobalt,2040,Stated policies,105.309
+Graphite,2040,Stated policies,1690.57
+Lithium,2040,Stated policies,433.207
+Manganese,2040,Stated policies,521.471
+Nickel,2040,Stated policies,1515.79
+Silicon,2040,Stated policies,351.987
+Neodymium,2040,Stated policies,18.8496
+Dysprosium,2040,Stated policies,1.83984
+Praseodymium,2040,Stated policies,2.82744
+Terbium,2040,Stated policies,0.390735
+Copper,2045,Stated policies,1457.66
+Cobalt,2045,Stated policies,133.987
+Graphite,2045,Stated policies,1491.75
+Lithium,2045,Stated policies,490.857
+Manganese,2045,Stated policies,801.579
+Nickel,2045,Stated policies,1615.17
+Silicon,2045,Stated policies,374.071
+Neodymium,2045,Stated policies,21.8002
+Dysprosium,2045,Stated policies,2.12784
+Praseodymium,2045,Stated policies,3.27003
+Terbium,2045,Stated policies,0.451897
+Copper,2050,Stated policies,1345.87
+Cobalt,2050,Stated policies,145.613
+Graphite,2050,Stated policies,1077.4
+Lithium,2050,Stated policies,465.842
+Manganese,2050,Stated policies,993.944
+Nickel,2050,Stated policies,1579.68
+Silicon,2050,Stated policies,373.485
+Neodymium,2050,Stated policies,22.8791
+Dysprosium,2050,Stated policies,2.23485
+Praseodymium,2050,Stated policies,3.43187
+Terbium,2050,Stated policies,0.474163
+Copper,2025,Announced pledges,688.677
+Cobalt,2025,Announced pledges,77.4906
+Graphite,2025,Announced pledges,1100.86
+Lithium,2025,Announced pledges,145.262
+Manganese,2025,Announced pledges,67.6813
+Nickel,2025,Announced pledges,709.341
+Silicon,2025,Announced pledges,46.6498
+Neodymium,2025,Announced pledges,8.40322
+Dysprosium,2025,Announced pledges,0.859738
+Praseodymium,2025,Announced pledges,1.26048
+Terbium,2025,Announced pledges,0.171865
+Copper,2030,Announced pledges,1591.93
+Cobalt,2030,Announced pledges,112.915
+Graphite,2030,Announced pledges,2436.53
+Lithium,2030,Announced pledges,349.47
+Manganese,2030,Announced pledges,231.467
+Nickel,2030,Announced pledges,1497.55
+Silicon,2030,Announced pledges,208.785
+Neodymium,2030,Announced pledges,17.6343
+Dysprosium,2030,Announced pledges,1.74272
+Praseodymium,2030,Announced pledges,2.64515
+Terbium,2030,Announced pledges,0.364278
+Copper,2035,Announced pledges,2570.4
+Cobalt,2035,Announced pledges,159.35
+Graphite,2035,Announced pledges,3703.06
+Lithium,2035,Announced pledges,671.274
+Manganese,2035,Announced pledges,595.156
+Nickel,2035,Announced pledges,2440.73
+Silicon,2035,Announced pledges,442.164
+Neodymium,2035,Announced pledges,30.2582
+Dysprosium,2035,Announced pledges,2.962
+Praseodymium,2035,Announced pledges,4.53873
+Terbium,2035,Announced pledges,0.626716
+Copper,2040,Announced pledges,3134.77
+Cobalt,2040,Announced pledges,212.579
+Graphite,2040,Announced pledges,3611.27
+Lithium,2040,Announced pledges,907.051
+Manganese,2040,Announced pledges,1028.01
+Nickel,2040,Announced pledges,3040.23
+Silicon,2040,Announced pledges,691.556
+Neodymium,2040,Announced pledges,39.4873
+Dysprosium,2040,Announced pledges,3.86547
+Praseodymium,2040,Announced pledges,5.9231
+Terbium,2040,Announced pledges,0.817872
+Copper,2045,Announced pledges,3241.24
+Cobalt,2045,Announced pledges,257.846
+Graphite,2045,Announced pledges,3136.32
+Lithium,2045,Announced pledges,1005.67
+Manganese,2045,Announced pledges,1508.4
+Nickel,2045,Announced pledges,3138.78
+Silicon,2045,Announced pledges,718.741
+Neodymium,2045,Announced pledges,44.3123
+Dysprosium,2045,Announced pledges,4.3432
+Praseodymium,2045,Announced pledges,6.64684
+Terbium,2045,Announced pledges,0.91749
+Copper,2050,Announced pledges,3306.83
+Cobalt,2050,Announced pledges,295.687
+Graphite,2050,Announced pledges,2485.77
+Lithium,2050,Announced pledges,1039.49
+Manganese,2050,Announced pledges,1997.33
+Nickel,2050,Announced pledges,3272.53
+Silicon,2050,Announced pledges,786.078
+Neodymium,2050,Announced pledges,48.7338
+Dysprosium,2050,Announced pledges,4.78711
+Praseodymium,2050,Announced pledges,7.31007
+Terbium,2050,Announced pledges,1.00842
+Copper,2025,Net zero 2050,1152.05
+Cobalt,2025,Net zero 2050,130.418
+Graphite,2025,Net zero 2050,1844.36
+Lithium,2025,Net zero 2050,242.703
+Manganese,2025,Net zero 2050,112.903
+Nickel,2025,Net zero 2050,1157.04
+Silicon,2025,Net zero 2050,74.5352
+Neodymium,2025,Net zero 2050,12.9681
+Dysprosium,2025,Net zero 2050,1.33044
+Praseodymium,2025,Net zero 2050,1.94521
+Terbium,2025,Net zero 2050,0.265012
+Copper,2030,Net zero 2050,2703.91
+Cobalt,2030,Net zero 2050,187.993
+Graphite,2030,Net zero 2050,4114.97
+Lithium,2030,Net zero 2050,591.556
+Manganese,2030,Net zero 2050,377.932
+Nickel,2030,Net zero 2050,2414.37
+Silicon,2030,Net zero 2050,328.747
+Neodymium,2030,Net zero 2050,26.3052
+Dysprosium,2030,Net zero 2050,2.61147
+Praseodymium,2030,Net zero 2050,3.94577
+Terbium,2030,Net zero 2050,0.542697
+Copper,2035,Net zero 2050,3799.47
+Cobalt,2035,Net zero 2050,230.828
+Graphite,2035,Net zero 2050,5486.07
+Lithium,2035,Net zero 2050,985.437
+Manganese,2035,Net zero 2050,816.385
+Nickel,2035,Net zero 2050,3391.95
+Silicon,2035,Net zero 2050,594.711
+Neodymium,2035,Net zero 2050,35.0145
+Dysprosium,2035,Net zero 2050,3.45096
+Praseodymium,2035,Net zero 2050,5.25217
+Terbium,2035,Net zero 2050,0.723856
+Copper,2040,Net zero 2050,3883.62
+Cobalt,2040,Net zero 2050,243.972
+Graphite,2040,Net zero 2050,4540.4
+Lithium,2040,Net zero 2050,1105.55
+Manganese,2040,Net zero 2050,1126.13
+Nickel,2040,Net zero 2050,3450.65
+Silicon,2040,Net zero 2050,755.772
+Neodymium,2040,Net zero 2050,33.9301
+Dysprosium,2040,Net zero 2050,3.3506
+Praseodymium,2040,Net zero 2050,5.08951
+Terbium,2040,Net zero 2050,0.701055
+Copper,2045,Net zero 2050,3897.36
+Cobalt,2045,Net zero 2050,278.214
+Graphite,2045,Net zero 2050,3786.42
+Lithium,2045,Net zero 2050,1172.97
+Manganese,2045,Net zero 2050,1566.12
+Nickel,2045,Net zero 2050,3444.45
+Silicon,2045,Net zero 2050,771.629
+Neodymium,2045,Net zero 2050,36.6641
+Dysprosium,2045,Net zero 2050,3.62476
+Praseodymium,2045,Net zero 2050,5.49962
+Terbium,2045,Net zero 2050,0.7573
+Copper,2050,Net zero 2050,3582.92
+Cobalt,2050,Net zero 2050,290.557
+Graphite,2050,Net zero 2050,2726.08
+Lithium,2050,Net zero 2050,1104.01
+Manganese,2050,Net zero 2050,1926.73
+Nickel,2050,Net zero 2050,3289.2
+Silicon,2050,Net zero 2050,795.034
+Neodymium,2050,Net zero 2050,37.4633
+Dysprosium,2050,Net zero 2050,3.70726
+Praseodymium,2050,Net zero 2050,5.61949
+Terbium,2050,Net zero 2050,0.773601
