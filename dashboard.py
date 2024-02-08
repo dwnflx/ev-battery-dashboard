@@ -40,7 +40,7 @@ scenario_mapping = {
 
 # Display the titleized options in the radio button widget
 scenario_display = list(scenario_mapping.keys())  # Extract the keys as the display options
-scenario = st.sidebar.radio(
+selected_scenario = st.sidebar.radio(
     "Scenario",
     scenario_display,
     index=0,  # Default is the first option
@@ -48,58 +48,79 @@ scenario = st.sidebar.radio(
 )
 
 # Convert the selected display option back to its dataset format
-scenario_actual = scenario_mapping[scenario]
+scenario_actual = scenario_mapping[selected_scenario]
 
 # Show selection
-st.header(f"{st.session_state.selected_mineral} with a '{scenario}' scenario")
+st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' scenario")
+
 
 # ==== Parameters ====
-st.sidebar.header('Battery parameters')
-# Sidebar - EV Battery Recycling Rate
-battery_recycling_rate = st.sidebar.slider(
-    "EV Battery Recycling Rate",
-    min_value=0.0, max_value=1.0, value=0.3, step=0.1
-)
-
-# Sidebar - EV Battery Repurpose Rate
-battery_repurpose_rate = st.sidebar.slider(
-    "EV Battery Repurpose Rate",
-    min_value=0.0, max_value=1.0, value=0.3, step=0.1
-)
-
-# Sidebar - EV Battery Waste Rate
-battery_waste_rate = round(1 - battery_recycling_rate - battery_repurpose_rate, 2)
-st.sidebar.write(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%")
+#st.sidebar.header('Parameters')
 
 
-# Sidebar - EV Battery Lifespan
-battery_lifespan = st.sidebar.slider(
-    "EV Battery Lifespan",
-    min_value=5, max_value=20, value=10, step=1
-)
+# Use st.markdown with custom CSS to adjust font size
+def custom_text(text: str, font_size: str = "16px"):
+    """Display text with custom font size using Markdown."""
+    markdown = f"<p style='font-size: {font_size};'>{text}</p>"
+    st.markdown(markdown, unsafe_allow_html=True)
 
-st.sidebar.header('Grid parameters')
-# Sidebar - Grid Storage Recycling Rate
-grid_recycling_rate = st.sidebar.slider(
-    "Grid Storage Recycling Rate",
-    min_value=0.0, max_value=1.0, value=0.3, step=0.1
-)
 
-# Sidebar - Grid Storage Waste Rate
-grid_waste_rate = round(1 - grid_recycling_rate, 2)
-st.sidebar.write(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%")
 
-# Sidebar - Grid Storage Lifecycle
-grid_lifespan = st.sidebar.slider(
-    "Grid Storage Lifecycle",
-    min_value=5, max_value=20, value=10, step=1
-)
+# Create two columns for the parameters
+col_battery, col_grid = st.sidebar.columns(2)
 
-# Sidebar - Extraction Limit Until 2050
-extraction_limit = st.sidebar.slider(
-    "Extraction Limit Until 2050",
-    min_value=0.1, max_value=0.8, value=0.3, step=0.1
-)
+# Column for Battery parameters
+with col_battery:
+    st.header("Battery Parameters")  # Optional: Add a sub-header or text
+    # EV Battery Recycling Rate
+    battery_recycling_rate = st.slider(
+        "EV Battery Recycling Rate",
+        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+    )
+
+    # EV Battery Repurpose Rate
+    battery_repurpose_rate = st.slider(
+        "EV Battery Repurpose Rate",
+        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+    )
+
+    # EV Battery Waste Rate
+    battery_waste_rate = round(1 - battery_recycling_rate - battery_repurpose_rate, 2)
+    #st.write(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%")
+    custom_text(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%", "14px")
+
+    # EV Battery Lifespan
+    battery_lifespan = st.slider(
+        "EV Battery Lifespan",
+        min_value=5, max_value=20, value=10, step=1
+    )
+
+# Column for Grid parameters
+with col_grid:
+    st.header("Grid Parameters")  # Optional: Add a sub-header or text
+    # Grid Storage Recycling Rate
+    grid_recycling_rate = st.slider(
+        "Grid Storage Recycling Rate",
+        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+    )
+
+    # Grid Storage Waste Rate
+    grid_waste_rate = round(1 - grid_recycling_rate, 2)
+    #st.write(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%")
+    custom_text(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%", "14px")
+
+    # Grid Storage Lifecycle
+    grid_lifespan = st.slider(
+        "Grid Storage Lifecycle",
+        min_value=5, max_value=20, value=10, step=1
+    )
+
+    # Extraction Limit Until 2050
+    extraction_limit = st.slider(
+        "Extraction Limit Until 2050",
+        min_value=0.1, max_value=0.8, value=0.3, step=0.1
+    )
+
 
 if battery_waste_rate < 0:
     # Display an error message and stop loading the dashboard
