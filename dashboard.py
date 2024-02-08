@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.linear_model import LinearRegression
@@ -30,12 +31,24 @@ if col2.button('Cobalt'):
 if col3.button('Nickel'):
     st.session_state.selected_mineral = 'Nickel'
 
-# Scenario Selection
+# Define a mapping between the display format and the dataset format
+scenario_mapping = {
+    'Stated Policies': 'Stated policies',
+    'Announced Pledges': 'Announced pledges',
+    'Net Zero 2050': 'Net zero 2050'
+}
+
+# Display the titleized options in the radio button widget
+scenario_display = list(scenario_mapping.keys())  # Extract the keys as the display options
 scenario = st.sidebar.radio(
     "Scenario",
-    ['Stated policies', 'Announced pledges', 'Net zero 2050'],
-    index=0  # Default is 'Stated policies'
+    scenario_display,
+    index=0,  # Default is the first option
+    help='Clean energy deployment trends under the Stated Policies Scenario (STEPS), Announced Pledges Scenario (APS) and Net Zero Emissions by 2050 Scenario (NZE) taken from the projections in the World Energy Outlook 2022, complemented by the results in the Energy Technology Perspectives 2023. \n\n The pace of mineral intensity improvements varies by scenario, with the STEPS generally seeing minimal improvement over time as compared to modest improvement (around 10% in the longer term) assumed in the APS.'
 )
+
+# Convert the selected display option back to its dataset format
+scenario_actual = scenario_mapping[scenario]
 
 # Show selection
 st.header(f"{st.session_state.selected_mineral} with a '{scenario}' scenario")
@@ -55,8 +68,8 @@ battery_repurpose_rate = st.sidebar.slider(
 )
 
 # Sidebar - EV Battery Waste Rate
-battery_waste_rate = round(1 - battery_recycling_rate - battery_repurpose_rate, 2) / 100
-st.sidebar.write(f"EV Battery Waste Rate: {battery_waste_rate * 100:.2f}%")
+battery_waste_rate = round(1 - battery_recycling_rate - battery_repurpose_rate, 2)
+st.sidebar.write(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%")
 
 
 # Sidebar - EV Battery Lifespan
@@ -73,8 +86,8 @@ grid_recycling_rate = st.sidebar.slider(
 )
 
 # Sidebar - Grid Storage Waste Rate
-grid_waste_rate = round(1 - grid_recycling_rate, 2) / 100
-st.sidebar.write(f"Grid Waste Rate: {grid_waste_rate * 100:.2f}%")
+grid_waste_rate = round(1 - grid_recycling_rate, 2)
+st.sidebar.write(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%")
 
 # Sidebar - Grid Storage Lifecycle
 grid_lifespan = st.sidebar.slider(
@@ -98,7 +111,7 @@ else:
     df = pd.read_csv('data/minerals_demand_long.csv')
     
     # Filter the data based on the scenario and mineral
-    df_filtered = df[(df['scenario'] == scenario) & (df['mineral'] == st.session_state.selected_mineral)]
+    df_filtered = df[(df['scenario'] == scenario_actual) & (df['mineral'] == st.session_state.selected_mineral)]
 
     
     # Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
