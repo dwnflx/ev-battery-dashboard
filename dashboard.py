@@ -8,7 +8,8 @@ from sklearn.linear_model import LinearRegression
 
 st.set_page_config(layout="wide")
 
-st.title('🔋 EV Battery Demand and Supply')
+
+st.title('🔋 EV Battery - simulation with recycling ♻️')
 
 # Rate of new findings for mineral sources per year
 NEW_FINDS = 0.05
@@ -18,16 +19,17 @@ NEW_FINDS = 0.05
 st.sidebar.header('Select Mineral and Scenario')
 # Create a row with three columns
 col1, col2, col3 = st.sidebar.columns(3)
-# Initialize a variable to hold the selected mineral
-selected_mineral = 'Lithium'
+# Initialize session_state for selected_mineral if it doesn't exist
+if 'selected_mineral' not in st.session_state:
+    st.session_state.selected_mineral = 'Lithium'
 
 # Using buttons to select minerals
 if col1.button('Lithium'):
-    selected_mineral = 'Lithium'
+    st.session_state.selected_mineral = 'Lithium'
 if col2.button('Cobalt'):
-    selected_mineral = 'Cobalt'
+    st.session_state.selected_mineral = 'Cobalt'
 if col3.button('Nickel'):
-    selected_mineral = 'Nickel'
+    st.session_state.selected_mineral = 'Nickel'
 
 # Scenario Selection
 scenario = st.sidebar.radio(
@@ -35,6 +37,9 @@ scenario = st.sidebar.radio(
     ['Stated policies', 'Announced pledges', 'Net zero 2050'],
     index=0  # Default is 'Stated policies'
 )
+
+# Show selection
+st.header(f"{st.session_state.selected_mineral} with a '{scenario}' scenario")
 
 # ==== Parameters ====
 st.sidebar.header('Battery parameters')
@@ -90,17 +95,24 @@ if battery_waste_rate < 0:
     
 else:
     # ==== Demand vs Supply ====
-    # Sample data
-    data = pd.DataFrame({
-        'Year': [2020, 2021, 2022, 2023, 2024],
-        'Mineral_Demand': [100, 150, 200, 250, 300],
-        'Mineral_Supply': [80, 130, 180, 230, 280]
-    })
+    # Load the CSV data for mineral demand
+    df = pd.read_csv('data/minerals_demand_long.csv')
+    
+    # Filter the data based on the scenario and mineral
+    df_filtered = df[(df['scenario'] == scenario) & (df['mineral'] == st.session_state.selected_mineral)]
+
+    
+    # Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
+    # SUPPLY AS FILLER FOR NOW
+    yearly_data = df_filtered.groupby('year')['demand'].sum().reset_index()
+    yearly_data['demand'] = yearly_data['demand']  # Assuming this is actually the supply
+    yearly_data['supply'] = yearly_data['demand'] * 1.10  # Calculating demand as 1.10 times supply
     
     # Creating the bar chart using Plotly
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=data['Year'], y=data['Mineral_Demand'], name='Demand', marker_color='#0e9c57'))
-    fig.add_trace(go.Bar(x=data['Year'], y=data['Mineral_Supply'], name='Supply', marker_color='#acc2a6'))
+    fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['demand'], name='Demand', marker_color='#0e9c57'))
+    fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['supply'], name='Supply', marker_color='#acc2a6'))
+    
     # Update layout for a more integrated look
     fig.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
@@ -123,7 +135,7 @@ else:
     df_reserves = pd.read_csv('data/Reserves_enriched.csv', sep=';', encoding='utf-8')
 
     # Filter the DataFrame for the selected mineral
-    df_selected_mineral = df_reserves[df_reserves['Mineral'] == selected_mineral]
+    df_selected_mineral = df_reserves[df_reserves['Mineral'] == st.session_state.selected_mineral]
     
     # Creating the global reserves map
     fig_map = px.scatter_geo(df_selected_mineral, 
@@ -132,12 +144,12 @@ else:
                              size='Reserves 2023 (in 1.000 Tons)', 
                              hover_name='Country', 
                              projection='natural earth', 
-                             title=f'Global Reserves of {selected_mineral}', 
+                             title=f'Global Reserves of {st.session_state.selected_mineral}', 
                              color_discrete_sequence=["green"])
     
     fig_map.update_layout(
         title={
-            'text': f"World Map of {selected_mineral} Reserves",
+            'text': f"World Map of {st.session_state.selected_mineral} Reserves (2023)",
             'y':0.9,
             'x':0.5,
             'xanchor': 'center',
