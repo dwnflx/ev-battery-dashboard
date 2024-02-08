@@ -115,10 +115,33 @@ with col_grid:
         min_value=5, max_value=20, value=10, step=1
     )
 
+    # Define the mapping of scenarios and minerals to their max reserve percentages
+    max_values = {
+        'Stated Policies': {
+            'Nickel': 0.35,
+            'Cobalt': 0.40,
+            'Lithium': 0.75
+        },
+        'Announced Pledges': {
+            'Nickel': 0.50,
+            'Cobalt': 0.55,
+            'Lithium': 0.85
+        },
+        'Net Zero 2050': {
+            'Nickel': 0.50,
+            'Cobalt': 0.55,
+            'Lithium': 0.85
+        }
+    }
+    
+    # Retrieve the max_value for the current selections
+    current_max_value = max_values[selected_scenario][st.session_state.selected_mineral]
+
     # Extraction Limit Until 2050
     extraction_limit = st.slider(
         "Extraction Limit Until 2050",
-        min_value=0.1, max_value=0.8, value=0.3, step=0.1
+        min_value=0.1, max_value=current_max_value, value=0.3, step=0.1,
+        help="Lithium, Cobalt and Nickel are used in batteries, but also in a diversity of other specialty applications. This factor accounts for other uses."
     )
 
 
