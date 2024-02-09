@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.linear_model import LinearRegression
+from model import BatteryModel, Params, InitialValues
+from BPTK_Py import sd_functions as sd
 
 st.set_page_config(layout="wide")
 
@@ -75,24 +77,19 @@ with col_battery:
     # EV Battery Recycling Rate
     battery_recycling_rate = st.slider(
         "EV Battery Recycling Rate",
-        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+        min_value=0.0, max_value=0.1, value=0.01, step=0.01
     )
 
     # EV Battery Repurpose Rate
     battery_repurpose_rate = st.slider(
         "EV Battery Repurpose Rate",
-        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+        min_value=0.0, max_value=0.1, value=0.01, step=0.01
     )
 
     # EV Battery Waste Rate
-    battery_waste_rate = round(1 - battery_recycling_rate - battery_repurpose_rate, 2)
-    #st.write(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%")
-    custom_text(f"EV Battery Waste Rate: {battery_waste_rate * 100:.0f}%", "14px")
-
-    # EV Battery Lifespan
-    battery_lifespan = st.slider(
-        "EV Battery Lifespan",
-        min_value=5, max_value=20, value=10, step=1
+    battery_waste_rate = st.slider(
+        "EV Battery Waste Rate",
+        min_value=0.0, max_value=0.1, value=0.01, step=0.01
     )
 
 # Column for Grid parameters
@@ -101,19 +98,15 @@ with col_grid:
     # Grid Storage Recycling Rate
     grid_recycling_rate = st.slider(
         "Grid Storage Recycling Rate",
-        min_value=0.0, max_value=1.0, value=0.3, step=0.1
+        min_value=0.0, max_value=0.1, value=0.01, step=0.01
     )
 
     # Grid Storage Waste Rate
-    grid_waste_rate = round(1 - grid_recycling_rate, 2)
-    #st.write(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%")
-    custom_text(f"Grid Waste Rate: {grid_waste_rate * 100:.0f}%", "14px")
-
-    # Grid Storage Lifecycle
-    grid_lifespan = st.slider(
-        "Grid Storage Lifecycle",
-        min_value=5, max_value=20, value=10, step=1
+    grid_waste_rate = st.slider(
+        "Grid Storage Waste Rate",
+        min_value=0.0, max_value=0.1, value=0.01, step=0.01
     )
+
 
     # Define the mapping of scenarios and minerals to their max reserve percentages
     max_values = {
@@ -137,11 +130,23 @@ with col_grid:
     # Retrieve the max_value for the current selections
     current_max_value = max_values[selected_scenario][st.session_state.selected_mineral]
 
-    # Extraction Limit Until 2050
-    extraction_limit = st.slider(
-        "Extraction Limit Until 2050",
-        min_value=0.1, max_value=current_max_value, value=0.3, step=0.1,
-        help="Lithium, Cobalt and Nickel are used in batteries, but also in a diversity of other specialty applications. This factor accounts for other uses."
+    mat_max = {
+        "Lithium": {
+            "resources": 26000.0
+        },
+        "Nickel": {
+            "resources": 100000.0
+        },
+        "Cobalt": {
+            "resources": 8300.0
+        }
+    }
+
+    # Mining value - annual amount of mineral mined (in kt)
+    mining = st.slider(
+        "Mining value",
+        min_value=0.0, max_value=mat_max[st.session_state.selected_mineral]["resources"]*0.1, value=0.0, step=mat_max[st.session_state.selected_mineral]["resources"]*0.1/100,
+        help="Annual amount of mineral mined (in kt)"
     )
 
 
@@ -150,19 +155,92 @@ if battery_waste_rate < 0:
     st.error("Invalid rates selected. Please ensure the combined recycling and repurpose rates do not exceed 100%.")
     
 else:
+
+   
     # ==== Demand vs Supply ====
     # Load the CSV data for mineral demand
     df = pd.read_csv('data/minerals_demand_long.csv')
-    
+
     # Filter the data based on the scenario and mineral
     df_filtered = df[(df['scenario'] == scenario_actual) & (df['mineral'] == st.session_state.selected_mineral)]
 
-    
     # Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
-    # SUPPLY AS FILLER FOR NOW
     yearly_data = df_filtered.groupby('year')['demand'].sum().reset_index()
-    yearly_data['demand'] = yearly_data['demand']  # Assuming this is actually the supply
-    yearly_data['supply'] = yearly_data['demand'] * 1.10  # Calculating demand as 1.10 times supply
+
+    # Extract the list of years from yearly_data
+    years_in_yearly_data = yearly_data['year'].unique()
+
+    # Calculate battery production
+    demand_2025 = yearly_data.loc[yearly_data['year'] == 2025, 'demand'].values[0]
+    demand_2022 = yearly_data.loc[yearly_data['year'] == 2022, 'demand'].values[0]
+    battery_production = (demand_2025 - demand_2022) / 3
+
+    """
+    params = Params(
+        battery_recycling_rate,
+        battery_repurpose_rate,
+        battery_waste_rate,
+        grid_recycling_rate,
+        grid_waste_rate,
+        extraction_limit,
+        battery_production
+    )
+    """
+
+    params = Params(
+        mining=mining,
+        battery_production=battery_production,
+        battery_recycling_rate=battery_recycling_rate,
+        battery_repurpose_rate=battery_repurpose_rate,
+        battery_waste_rate=battery_waste_rate,
+        grid_recycling_rate=grid_recycling_rate,
+        grid_waste_rate=grid_waste_rate
+    )
+
+    init_values_dict = {
+        "Lithium": {
+            "resources": 26000.0,
+            "stocks": 260.0,
+            "batteries": 89.0,
+            "grid": 300.0,
+            "waste": 500.0
+        },
+        "Nickel": {
+            "resources": 100000.0,
+            "stocks": 1000.0,
+            "batteries": 399.0,
+            "grid": 1200.0,
+            "waste": 300.0
+        },
+        "Cobalt": {
+            "resources": 8300.0,
+            "stocks": 80.0,
+            "batteries": 133.0,
+            "grid": 1000.0,
+            "waste": 200.0
+        }
+    }
+
+
+    mineral_values = InitialValues(**init_values_dict[st.session_state.selected_mineral])
+    
+    model = BatteryModel(params, mineral_values)
+    df_stocks = model.get_stocks_df()
+
+    # Filter df_stocks to include only rows where the 'year' is in years_in_yearly_data
+    filtered_df_stocks = df_stocks[df_stocks.index.isin(years_in_yearly_data)].reset_index().rename(columns={'index': 'year'})
+
+    yearly_data['supply'] = filtered_df_stocks['batteries']
+    #st.dataframe(yearly_data.head())
+
+
+    # Create a Plotly Express figure
+    fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col != 'year'], title='Stock Values Over Time')
+
+    # Display the figure in Streamlit
+    st.plotly_chart(fig)
+
+    st.dataframe(filtered_df_stocks)
     
     # Creating the bar chart using Plotly
     fig = go.Figure()
