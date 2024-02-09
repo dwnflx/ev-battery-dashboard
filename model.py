@@ -1,26 +1,17 @@
 import pandas as pd
 from BPTK_Py import Model
 from BPTK_Py.sddsl import Stock
-from enum import Enum
+
 from dataclasses import dataclass
 
 START_YEAR = 2022
 END_YEAR = 2050
-
-class Mineral(Enum):
-    LITHIUM = "lithium"
-    NICKEL = "nickel"
-    COBALT = "cobalt"
-
-
-class Scenario(Enum):
-    POLICIES = "policies"
-    PLEDES = "pledges"
-    NET_ZERO = "net_zero"
+NEW_FINDS_PERCENT = 0.05
 
 
 @dataclass
 class Params:
+    # Rates between 0 and 1
     battery_recycling_rate: float
     battery_repurpose_rate: float
     battery_waste_rate: float
@@ -28,9 +19,22 @@ class Params:
     grid_waste_rate: float
     extraction_limit: float
 
+    # Mineral used in battery production in kt
+    battery_production: float
+
+
+# Initial values in kt
+@dataclass
+class InitialValues:
+    resources: float
+    stocks: float
+    batteries: float
+    grid: float
+    waste: float
+
 
 class BatteryModel():
-    def __init__(self, mineral: Mineral, scenario: Scenario, params: Params):
+    def __init__(self, params: Params, values: InitialValues):
         self.model = Model(starttime=START_YEAR, stoptime=END_YEAR, dt=1, name='EV battery model')
 
         # Stocks
@@ -57,9 +61,6 @@ class BatteryModel():
         self.battery_waste_rate = self.model.constant("battery_waste_rate")
         self.grid_recycling_rate = self.model.constant("grid_recycling_rate")
         self.grid_waste_rate = self.model.constant("grid_waste_rate")
-        # self.battery_lifespan = self.model.constant("battery_lifespan")
-        # self.grid_lifespan = self.model.constant("grid_lifespan")
-        # self.extraction_limit  = self.model.constant("extraction_limit")
 
         # Stock equations
         self.resources.equation = self.new_finds - self.mining
@@ -69,6 +70,7 @@ class BatteryModel():
         self.waste.equation = self.battery_waste + self.grid_waste
 
         # Flow equations
+        self.battery_production.equation = params.battery_production
         self.battery_recycling.equation = self.battery_recycling_rate * self.batteries
         self.battery_repurpose.equation = self.battery_repurpose_rate * self.batteries
         self.battery_waste.equation = self.battery_waste_rate * self.batteries
@@ -76,11 +78,11 @@ class BatteryModel():
         self.grid_waste_rate = self.grid_waste_rate * self.grid
 
         # Initialization
-        self.resources.initial_value = 100000.0
-        self.stocks.initial_value = 100.0
-        self.batteries.initial_value = 1000.0
-        self.grid.initial_value = 300.0
-        self.waste.initial_value = 500.0
+        self.resources.initial_value = values.resources
+        self.stocks.initial_value = values.stocks
+        self.batteries.initial_value = values.batteries
+        self.grid.initial_value = values.grid
+        self.waste.initial_value = values.waste
 
         # Constant equations
         self.battery_recycling_rate.equation = params.battery_recycling_rate
@@ -88,9 +90,9 @@ class BatteryModel():
         self.battery_waste_rate.equation = params.battery_waste_rate
         self.grid_recycling_rate.equation = params.grid_recycling_rate
 
-        self.new_finds.equation = 1000
+        self.new_finds.equation = self.resources.initial_value * NEW_FINDS_PERCENT
         self.mining.equation = self.resources.initial_value * params.extraction_limit / (END_YEAR - START_YEAR)
-        self.battery_production.equation = 4000
+
 
     def get_stocks_df(self) -> pd.DataFrame:
         stocks = self._get_stocks()
