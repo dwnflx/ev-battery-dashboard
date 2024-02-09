@@ -75,8 +75,8 @@ class BatteryModel():
         self.battery_recycling.equation = self.battery_recycling_rate * self.batteries
         self.battery_repurpose.equation = self.battery_repurpose_rate * self.batteries
         self.battery_waste.equation = self.battery_waste_rate * self.batteries
-        self.grid_recycling_rate = self.grid_recycling_rate * self.grid
-        self.grid_waste_rate = self.grid_waste_rate * self.grid
+        self.grid_recycling.equation = self.grid_recycling_rate * self.grid
+        self.grid_waste.equation = self.grid_waste_rate * self.grid
 
         # Initialization
         self.resources.initial_value = values.resources

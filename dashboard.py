@@ -77,19 +77,19 @@ with col_battery:
     # EV Battery Recycling Rate
     battery_recycling_rate = st.slider(
         "EV Battery Recycling Rate",
-        min_value=0.0, max_value=0.1, value=0.01, step=0.01
+        min_value=0.0, max_value=0.1, value=0.0, step=0.01
     )
 
     # EV Battery Repurpose Rate
     battery_repurpose_rate = st.slider(
         "EV Battery Repurpose Rate",
-        min_value=0.0, max_value=0.1, value=0.01, step=0.01
+        min_value=0.0, max_value=0.1, value=0.0, step=0.01
     )
 
     # EV Battery Waste Rate
     battery_waste_rate = st.slider(
         "EV Battery Waste Rate",
-        min_value=0.0, max_value=0.1, value=0.01, step=0.01
+        min_value=0.0, max_value=0.1, value=0.0, step=0.01
     )
 
 # Column for Grid parameters
@@ -98,13 +98,13 @@ with col_grid:
     # Grid Storage Recycling Rate
     grid_recycling_rate = st.slider(
         "Grid Storage Recycling Rate",
-        min_value=0.0, max_value=0.1, value=0.01, step=0.01
+        min_value=0.0, max_value=0.1, value=0.0, step=0.01
     )
 
     # Grid Storage Waste Rate
     grid_waste_rate = st.slider(
         "Grid Storage Waste Rate",
-        min_value=0.0, max_value=0.1, value=0.01, step=0.01
+        min_value=0.0, max_value=0.1, value=0.0, step=0.01
     )
 
 
@@ -187,21 +187,21 @@ else:
 
     init_values_dict = {
         "Lithium": {
-            "resources": 26000.0,
+            "resources": 26000.0 * 0.4,
             "stocks": 260.0,
             "batteries": 89.0,
             "grid": 300.0,
             "waste": 500.0
         },
         "Nickel": {
-            "resources": 100000.0,
+            "resources": 100000.0 * 0.4,
             "stocks": 1000.0,
             "batteries": 399.0,
             "grid": 1200.0,
             "waste": 300.0
         },
         "Cobalt": {
-            "resources": 8300.0,
+            "resources": 8300.0 * 0.4,
             "stocks": 80.0,
             "batteries": 133.0,
             "grid": 1000.0,
@@ -221,18 +221,18 @@ else:
     yearly_data['supply'] = filtered_df_stocks['batteries']
     #st.dataframe(yearly_data.head())
 
+    # st.dataframe(filtered_df_stocks)
+    st.write(f'Yearly demand (battery production): {battery_production:.2f} kt')
 
     # Create a Plotly Express figure
     col1, col2 = st.columns(2)
     with col1:
         fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
     with col2:
         fig = px.line(filtered_df_stocks, x='year', y='resources', title='Resources Over Time')
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
-
-    # st.dataframe(filtered_df_stocks)
     
     # Creating the bar chart using Plotly
     fig = go.Figure()
