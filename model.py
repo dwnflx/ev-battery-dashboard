@@ -4,6 +4,8 @@ from BPTK_Py.sddsl import Stock
 from enum import Enum
 from dataclasses import dataclass
 
+START_YEAR = 2022
+END_YEAR = 2050
 
 class Mineral(Enum):
     LITHIUM = "lithium"
@@ -24,11 +26,12 @@ class Params:
     battery_waste_rate: float
     grid_recycling_rate: float
     grid_waste_rate: float
+    extraction_limit: float
 
 
 class BatteryModel():
     def __init__(self, mineral: Mineral, scenario: Scenario, params: Params):
-        self.model = Model(starttime=2022, stoptime=2050, dt=1, name='EV battery model')
+        self.model = Model(starttime=START_YEAR, stoptime=END_YEAR, dt=1, name='EV battery model')
 
         # Stocks
         self.resources = self.model.stock("resources")
@@ -73,20 +76,21 @@ class BatteryModel():
         self.grid_waste_rate = self.grid_waste_rate * self.grid
 
         # Initialization
+        self.resources.initial_value = 100000.0
+        self.stocks.initial_value = 100.0
+        self.batteries.initial_value = 1000.0
+        self.grid.initial_value = 300.0
+        self.waste.initial_value = 500.0
+
+        # Constant equations
         self.battery_recycling_rate.equation = params.battery_recycling_rate
         self.battery_repurpose_rate.equation = params.battery_repurpose_rate
         self.battery_waste_rate.equation = params.battery_waste_rate
         self.grid_recycling_rate.equation = params.grid_recycling_rate
 
         self.new_finds.equation = 1000
-        self.mining.equation = 3000
+        self.mining.equation = self.resources.initial_value * params.extraction_limit / (END_YEAR - START_YEAR)
         self.battery_production.equation = 4000
-
-        self.resources.initial_value = 100000.0
-        self.stocks.initial_value = 100.0
-        self.batteries.initial_value = 1000.0
-        self.grid.initial_value = 300.0
-        self.waste.initial_value = 500.0
 
     def get_stocks_df(self) -> pd.DataFrame:
         stocks = self._get_stocks()
