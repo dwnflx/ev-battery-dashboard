@@ -1,10 +1,33 @@
 import pandas as pd
 from BPTK_Py import Model
 from BPTK_Py.sddsl import Stock
+from enum import Enum
+from dataclasses import dataclass
+
+
+class Mineral(Enum):
+    LITHIUM = "lithium"
+    NICKEL = "nickel"
+    COBALT = "cobalt"
+
+
+class Scenario(Enum):
+    POLICIES = "policies"
+    PLEDES = "pledges"
+    NET_ZERO = "net_zero"
+
+
+@dataclass
+class Params:
+    battery_recycling_rate: float
+    battery_repurpose_rate: float
+    battery_waste_rate: float
+    grid_recycling_rate: float
+    grid_waste_rate: float
 
 
 class BatteryModel():
-    def __init__(self):
+    def __init__(self, mineral: Mineral, scenario: Scenario, params: Params):
         self.model = Model(starttime=2022, stoptime=2050, dt=1, name='EV battery model')
 
         # Stocks
@@ -50,10 +73,10 @@ class BatteryModel():
         self.grid_waste_rate = self.grid_waste_rate * self.grid
 
         # Initialization
-        self.battery_recycling_rate.equation = 0.05
-        self.battery_repurpose_rate.equation = 0.02
-        self.battery_waste_rate.equation = 0.03  # 1 - battery_recycling_rate - battery_repurpose_rate
-        self.grid_recycling_rate.equation = 0.05
+        self.battery_recycling_rate.equation = params.battery_recycling_rate
+        self.battery_repurpose_rate.equation = params.battery_repurpose_rate
+        self.battery_waste_rate.equation = params.battery_waste_rate
+        self.grid_recycling_rate.equation = params.grid_recycling_rate
 
         self.new_finds.equation = 1000
         self.mining.equation = 3000
