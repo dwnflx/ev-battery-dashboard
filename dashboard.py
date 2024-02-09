@@ -175,18 +175,6 @@ else:
     demand_2022 = yearly_data.loc[yearly_data['year'] == 2022, 'demand'].values[0]
     battery_production = df_filtered.loc[:, 'demand'].mean()
 
-    """
-    params = Params(
-        battery_recycling_rate,
-        battery_repurpose_rate,
-        battery_waste_rate,
-        grid_recycling_rate,
-        grid_waste_rate,
-        extraction_limit,
-        battery_production
-    )
-    """
-
     params = Params(
         mining=mining,
         battery_production=battery_production,
@@ -235,12 +223,16 @@ else:
 
 
     # Create a Plotly Express figure
-    fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
+    col1, col2 = st.columns(2)
+    with col1:
+        fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
+        st.plotly_chart(fig)
+    with col2:
+        fig = px.line(filtered_df_stocks, x='year', y='resources', title='Resources Over Time')
+        st.plotly_chart(fig)
 
-    # Display the figure in Streamlit
-    st.plotly_chart(fig)
 
-    st.dataframe(filtered_df_stocks)
+    # st.dataframe(filtered_df_stocks)
     
     # Creating the bar chart using Plotly
     fig = go.Figure()
@@ -297,75 +289,6 @@ else:
         paper_bgcolor='rgba(0,0,0,0)',  # Optional: Transparent background outside the map
         margin=dict(l=0, r=0, t=40, b=0)  # Adjust margins to make room for the title
     )
-    
-    # Use Streamlit columns to layout the bar chart and map side by side
-    col1, col2 = st.columns(2)
-    with col1:
-        st.plotly_chart(fig, use_container_width=True)
-    with col2:
-        st.plotly_chart(fig_map, use_container_width=True)
-    
-    
-    
-    # ==== Forecasting EV Battery Demand ====
-    # Simple synthetic data for demonstration
-    years_demand = np.arange(2020, 2030)
-    demand_values = np.random.rand(10) * 100 + years_demand * 50  # Increasing trend
-    
-    # Fit a simple linear regression model for forecasting
-    model_demand = LinearRegression().fit(years_demand.reshape(-1, 1), demand_values)
-    
-    # Forecast for the next 5 years
-    future_years_demand = np.arange(2030, 2035)
-    forecast_demand = model_demand.predict(future_years_demand.reshape(-1, 1))
-    
-    # Plotting the forecast
-    fig_forecast = go.Figure()
-    fig_forecast.add_trace(go.Scatter(x=years_demand, y=demand_values, mode='lines+markers', name='Actual Demand', marker_color='green', line=dict(color='forestgreen')))
-    fig_forecast.add_trace(go.Scatter(x=future_years_demand, y=forecast_demand, mode='lines+markers', name='Forecasted Demand', line=dict(color='limegreen', dash='dash')))
-    fig_forecast.update_layout(
-        title='Forecasting EV Battery Demand',
-        xaxis_title='Year',
-        yaxis_title='Demand',
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color="#333333"
-    )
-    
-    # ==== Resource Depletion Timeline ====
-    # Resource Depletion Plot
-    current_reserves = 50000  # Example reserve quantity, adjust as per your data
-    annual_consumption = 2500  # Starting consumption
-    consumption_growth_rate = 0.05  # Annual growth in consumption
-    
-    years = [2020]  # Starting year
-    reserves = [current_reserves]  # Starting reserves
-    
-    year = 2020
-    while current_reserves > 0:
-        year += 1
-        annual_consumption *= (1 + consumption_growth_rate)
-        current_reserves -= annual_consumption
-        years.append(year)
-        reserves.append(max(current_reserves, 0))  # Prevent negative reserves
-    
-    # Create a depletion plot
-    fig_depletion = go.Figure()
-    fig_depletion.add_trace(go.Scatter(x=years, y=reserves, fill='tozeroy', mode='lines+markers', name='Remaining Reserves',line=dict(color='seagreen')))
-    fig_depletion.update_layout(
-        title='Resource Depletion Timeline',
-        xaxis_title='Year',
-        yaxis_title='Remaining Reserves',
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font_color="#333333"
-    )
-    
-    # Display the new row of plots
-    col3, col4 = st.columns(2)
-    
-    with col3:
-        st.plotly_chart(fig_forecast, use_container_width=True)
-    
-    with col4:
-        st.plotly_chart(fig_depletion, use_container_width=True)
+
+    st.plotly_chart(fig_map, use_container_width=True)
+
