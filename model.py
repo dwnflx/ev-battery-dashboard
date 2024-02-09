@@ -1,3 +1,4 @@
+import pandas as pd
 from BPTK_Py import Model
 from BPTK_Py.sddsl import Stock
 
@@ -64,7 +65,13 @@ class BatteryModel():
         self.grid.initial_value = 300.0
         self.waste.initial_value = 500.0
 
-    def get_stocks(self) -> dict[str, Stock]:
+    def get_stocks_df(self) -> pd.DataFrame:
+        stocks = self._get_stocks()
+        df = pd.concat([stock.plot(return_df=True) for stock in stocks.values()], axis=1)
+        df.index = df.index.astype(int)
+        return df
+
+    def _get_stocks(self) -> dict[str, Stock]:
         return {
             "resources": self.resources,
             "stocks": self.stocks,
