@@ -145,7 +145,7 @@ with col_grid:
     # Mining value - annual amount of mineral mined (in kt)
     mining = st.slider(
         "Mining value",
-        min_value=0.0, max_value=mat_max[st.session_state.selected_mineral]["resources"]*0.1, value=0.0, step=mat_max[st.session_state.selected_mineral]["resources"]*0.1/100,
+        min_value=0.0, max_value=mat_max[st.session_state.selected_mineral]["resources"]*0.02, value=0.0, step=mat_max[st.session_state.selected_mineral]["resources"]*0.02/100,
         help="Annual amount of mineral mined (in kt)"
     )
 
@@ -173,7 +173,7 @@ else:
     # Calculate battery production
     demand_2025 = yearly_data.loc[yearly_data['year'] == 2025, 'demand'].values[0]
     demand_2022 = yearly_data.loc[yearly_data['year'] == 2022, 'demand'].values[0]
-    battery_production = (demand_2025 - demand_2022) / 3
+    battery_production = df_filtered.loc[:, 'demand'].mean()
 
     """
     params = Params(
@@ -235,7 +235,7 @@ else:
 
 
     # Create a Plotly Express figure
-    fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col != 'year'], title='Stock Values Over Time')
+    fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
 
     # Display the figure in Streamlit
     st.plotly_chart(fig)
