@@ -1,14 +1,14 @@
 mineral,year,scenario,demand
-Copper,2022,Stated policies,373.331
-Cobalt,2022,Stated policies,64.5606
-Graphite,2022,Stated policies,557.201
-Lithium,2022,Stated policies,69.739
-Manganese,2022,Stated policies,75.3696
-Nickel,2022,Stated policies,325.831
-Silicon,2022,Stated policies,8.69982
-Neodymium,2022,Stated policies,3.96194
-Dysprosium,2022,Stated policies,0.412567
-Praseodymium,2022,Stated policies,0.594292
+Copper,2022,Baseline,373.331
+Cobalt,2022,Baseline,64.5606
+Graphite,2022,Baseline,557.201
+Lithium,2022,Baseline,69.739
+Manganese,2022,Baseline,75.3696
+Nickel,2022,Baseline,325.831
+Silicon,2022,Baseline,8.69982
+Neodymium,2022,Baseline,3.96194
+Dysprosium,2022,Baseline,0.412567
+Praseodymium,2022,Baseline,0.594292
 Terbium,2022,Stated policies,0.0806063
 Copper,2025,Stated policies,579.785
 Cobalt,2025,Stated policies,66.3701

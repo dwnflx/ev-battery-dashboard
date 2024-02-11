@@ -16,7 +16,10 @@ st.title('🔋 EV Battery - simulation with recycling ♻️')
 # Rate of new findings for mineral sources per year
 NEW_FINDS = 0.05
 
-# SIDEBAR
+#####################
+# ==== SIDEBAR ==== #
+#####################
+
 # ==== Minerals and Scenario ==== 
 st.sidebar.header('Select Mineral and Scenario')
 # Create a row with three columns
@@ -32,6 +35,7 @@ if col2.button('Cobalt'):
     st.session_state.selected_mineral = 'Cobalt'
 if col3.button('Nickel'):
     st.session_state.selected_mineral = 'Nickel'
+
 
 # Define a mapping between the display format and the dataset format
 scenario_mapping = {
@@ -57,17 +61,6 @@ st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' sce
 
 
 # ==== Parameters ====
-#st.sidebar.header('Parameters')
-
-
-# Use st.markdown with custom CSS to adjust font size
-def custom_text(text: str, font_size: str = "16px"):
-    """Display text with custom font size using Markdown."""
-    markdown = f"<p style='font-size: {font_size};'>{text}</p>"
-    st.markdown(markdown, unsafe_allow_html=True)
-
-
-
 # Create two columns for the parameters
 col_battery, col_grid = st.sidebar.columns(2)
 
@@ -75,40 +68,76 @@ col_battery, col_grid = st.sidebar.columns(2)
 with col_battery:
     st.header("Battery Parameters")  # Optional: Add a sub-header or text
     # EV Battery Recycling Rate
-    battery_recycling_rate = st.slider(
+    battery_recycling_rate_prct = st.slider(
         "EV Battery Recycling Rate",
-        min_value=0.0, max_value=0.1, value=0.0, step=0.01
+        min_value=0.0,  # This now represents 0%
+        max_value=10.0,  # This now represents 10%
+        value=0.0,  # Default value, representing 0%
+        step=1.0,  # Step size, representing 1%
+        format="%g%%"  # Display format, showing the value as a percentage
     )
+    
+    # Convert the slider value back to a fraction
+    battery_recycling_rate = battery_recycling_rate_prct / 100.0
+   
 
     # EV Battery Repurpose Rate
-    battery_repurpose_rate = st.slider(
+    battery_repurpose_rate_prct = st.slider(
         "EV Battery Repurpose Rate",
-        min_value=0.0, max_value=0.1, value=0.0, step=0.01
+        min_value=0.0,  # This now represents 0%
+        max_value=10.0,  # This now represents 10%
+        value=0.0,  # Default value, representing 0%
+        step=1.0,  # Step size, representing 1%
+        format="%g%%"  # Display format, showing the value as a percentage
     )
+
+    # Convert the slider value back to a fraction
+    battery_repurpose_rate = battery_repurpose_rate_prct / 100.0
 
     # EV Battery Waste Rate
-    battery_waste_rate = st.slider(
+    battery_waste_rate_prct = st.slider(
         "EV Battery Waste Rate",
-        min_value=0.0, max_value=0.1, value=0.0, step=0.01
+        min_value=0.0,  # This now represents 0%
+        max_value=10.0,  # This now represents 10%
+        value=0.0,  # Default value, representing 0%
+        step=1.0,  # Step size, representing 1%
+        format="%g%%"  # Display format, showing the value as a percentage
     )
 
+    # Convert the slider value back to a fraction
+    battery_waste_rate = battery_waste_rate_prct / 100.0
+    
 # Column for Grid parameters
 with col_grid:
     st.header("Grid Parameters")  # Optional: Add a sub-header or text
     # Grid Storage Recycling Rate
-    grid_recycling_rate = st.slider(
+    grid_recycling_rate_prct = st.slider(
         "Grid Storage Recycling Rate",
-        min_value=0.0, max_value=0.1, value=0.0, step=0.01
+        min_value=0.0,  # This now represents 0%
+        max_value=10.0,  # This now represents 10%
+        value=0.0,  # Default value, representing 0%
+        step=1.0,  # Step size, representing 1%
+        format="%g%%"  # Display format, showing the value as a percentage
     )
 
+    # Convert the slider value back to a fraction
+    grid_recycling_rate = grid_recycling_rate_prct / 100.0
+    
     # Grid Storage Waste Rate
-    grid_waste_rate = st.slider(
+    grid_waste_rate_prct = st.slider(
         "Grid Storage Waste Rate",
-        min_value=0.0, max_value=0.1, value=0.0, step=0.01
+        min_value=0.0,  # This now represents 0%
+        max_value=10.0,  # This now represents 10%
+        value=0.0,  # Default value, representing 0%
+        step=1.0,  # Step size, representing 1%
+        format="%g%%"  # Display format, showing the value as a percentage
     )
 
+    # Convert the slider value back to a fraction
+    grid_waste_rate = grid_waste_rate_prct / 100.0
 
-    # Define the mapping of scenarios and minerals to their max reserve percentages
+
+    # Define the mapping of scenarios and minerals to their max reserve percentages, e.g what share of the reserve can be allocated for battery production
     max_values = {
         'Stated Policies': {
             'Nickel': 0.35,
@@ -145,7 +174,10 @@ with col_grid:
     # Mining value - annual amount of mineral mined (in kt)
     mining = st.slider(
         "Mining value",
-        min_value=0.0, max_value=mat_max[st.session_state.selected_mineral]["resources"]*0.02, value=0.0, step=mat_max[st.session_state.selected_mineral]["resources"]*0.02/100,
+        min_value=0,
+        max_value=int(mat_max[st.session_state.selected_mineral]["resources"]*0.02),
+        value=0,
+        step=int(mat_max[st.session_state.selected_mineral]["resources"]*0.02/100),
         help="Annual amount of mineral mined (in kt)"
     )
 
@@ -155,15 +187,18 @@ if battery_waste_rate < 0:
     st.error("Invalid rates selected. Please ensure the combined recycling and repurpose rates do not exceed 100%.")
     
 else:
-
-   
-    # ==== Demand vs Supply ====
+    
+    #######################
+    # ==== DASHBOARD ==== #
+    #######################
+    
+    # ==== Stock Values and Resources Over Time ====
     # Load the CSV data for mineral demand
     df = pd.read_csv('data/minerals_demand_long.csv')
 
     # Filter the data based on the scenario and mineral
-    df_filtered = df[(df['scenario'] == scenario_actual) & (df['mineral'] == st.session_state.selected_mineral)]
-
+    df_filtered = df[((df['scenario'] == scenario_actual) | ((df['year'] == 2022) & (df['scenario'] == 'Baseline'))) & (df['mineral'] == st.session_state.selected_mineral)]
+    
     # Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
     yearly_data = df_filtered.groupby('year')['demand'].sum().reset_index()
 
@@ -185,23 +220,24 @@ else:
         grid_waste_rate=grid_waste_rate
     )
 
+    # Initialize values per mineral - adapt with help of 'current_max_value' to reflect the true share depending on scenario/mineral chosen    
     init_values_dict = {
         "Lithium": {
-            "resources": 26000.0 * 0.4,
+            "resources": 26000.0 * current_max_value,
             "stocks": 260.0,
             "batteries": 89.0,
             "grid": 300.0,
             "waste": 500.0
         },
         "Nickel": {
-            "resources": 100000.0 * 0.4,
+            "resources": 100000.0 * current_max_value,
             "stocks": 1000.0,
             "batteries": 399.0,
             "grid": 1200.0,
             "waste": 300.0
         },
         "Cobalt": {
-            "resources": 8300.0 * 0.4,
+            "resources": 8300.0 * current_max_value,
             "stocks": 80.0,
             "batteries": 133.0,
             "grid": 1000.0,
@@ -211,7 +247,8 @@ else:
 
 
     mineral_values = InitialValues(**init_values_dict[st.session_state.selected_mineral])
-    
+
+    # Load model with corresponding parameters
     model = BatteryModel(params, mineral_values)
     df_stocks = model.get_stocks_df()
 
@@ -219,15 +256,16 @@ else:
     filtered_df_stocks = df_stocks[df_stocks.index.isin(years_in_yearly_data)].reset_index().rename(columns={'index': 'year'})
 
     yearly_data['supply'] = filtered_df_stocks['batteries']
-    #st.dataframe(yearly_data.head())
+   
 
     # st.dataframe(filtered_df_stocks)
     st.write(f'Yearly demand (battery production): {battery_production:.2f} kt')
 
-    # Create a Plotly Express figure
+    # Create a Plotly Express figure for both
     col1, col2 = st.columns(2)
     with col1:
         fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
+        fig.update_layout(legend_title_text='Variable')
         st.plotly_chart(fig, use_container_width=True)
     with col2:
         fig = px.line(filtered_df_stocks, x='year', y='resources', title='Resources Over Time')
@@ -256,7 +294,6 @@ else:
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black', gridcolor='rgba(0,0,0,0)')
     
     # ==== Global Resource Map ====
-    # Sample data for the global map (replace with your actual data)
     # Load the CSV file into a DataFrame
     df_reserves = pd.read_csv('data/Reserves_enriched.csv', sep=';', encoding='utf-8')
 
