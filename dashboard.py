@@ -57,19 +57,19 @@ st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' sce
 # ==== Parameters ====
 
 # Mining value - annual amount of mineral mined (in kt)
-mat_max = {
+max_minerals = {
     "Lithium": 26000,
     "Nickel": 100000,
     "Cobalt": 8300
 }
-mat_max_selected = mat_max[st.session_state.selected_mineral]
+max_mineral = max_minerals[st.session_state.selected_mineral]
 
 mining = st.sidebar.slider(
     "Mining value",
     min_value=0,
-    max_value=mat_max_selected // 25,
+    max_value=max_mineral // 25,
     value=0,
-    step=mat_max_selected // 5000,
+    step=max_mineral // 5000,
     format="%gkt",
     help="Annual amount of mineral mined. Try to match the yearly demand of the selected mineral shown on the right. "
          "As you increase recycling and repurpose rates, less mining is required to keep mineral stocks for battery "
@@ -156,7 +156,7 @@ with col_grid:
     grid_waste_rate = grid_waste_rate_prct / 100.0
 
     # Define the mapping of scenarios and minerals to their max reserve percentages, e.g what share of the reserve can be allocated for battery production
-    max_values = {
+    mineral_allocations = {
         'Stated Policies': {
             'Nickel': 0.35,
             'Cobalt': 0.40,
@@ -175,7 +175,7 @@ with col_grid:
     }
 
     # Retrieve the max_value for the current selections
-    current_max_value = max_values[selected_scenario][st.session_state.selected_mineral]
+    mineral_allocation = mineral_allocations[selected_scenario][st.session_state.selected_mineral]
 
 
 #######################
@@ -212,24 +212,24 @@ params = Params(
     grid_waste_rate=grid_waste_rate
 )
 
-# Initialize values per mineral - adapt with help of 'current_max_value' to reflect the true share depending on scenario/mineral chosen
+# Initialize values per mineral - adapt with help of 'mineral_allocation' to reflect the true share depending on scenario/mineral chosen
 init_values_dict = {
     "Lithium": {
-        "resources": 26000.0 * current_max_value,
+        "resources": 26000.0 * mineral_allocation,
         "stocks": 260.0,
         "batteries": 89.0,
         "grid": 300.0,
         "waste": 500.0
     },
     "Nickel": {
-        "resources": 100000.0 * current_max_value,
+        "resources": 100000.0 * mineral_allocation,
         "stocks": 1000.0,
         "batteries": 399.0,
         "grid": 1200.0,
         "waste": 300.0
     },
     "Cobalt": {
-        "resources": 8300.0 * current_max_value,
+        "resources": 8300.0 * mineral_allocation,
         "stocks": 80.0,
         "batteries": 133.0,
         "grid": 1000.0,
@@ -256,13 +256,13 @@ col1, col2 = st.columns(2)
 with col1:
     fig = px.line(filtered_df_stocks, x='year',
                   y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']],
-                  range_y=[-mat_max_selected // 8, mat_max_selected // 3],
+                  range_y=[-max_mineral // 8, max_mineral // 3],
                   title='Stock Values Over Time')
     fig.update_layout(legend_title_text='Variable')
     st.plotly_chart(fig, use_container_width=True)
 with col2:
     fig = px.line(filtered_df_stocks, x='year', y='resources',
-                  range_y=[-mat_max_selected // 8, mat_max_selected],
+                  range_y=[-max_mineral // 8, max_mineral],
                   title='Resources Over Time')
     st.plotly_chart(fig, use_container_width=True)
 
