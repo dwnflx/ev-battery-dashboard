@@ -1,4 +1,4 @@
-# 🔋 Simulation of Mineral Resources for EV Batteries ♻️
+# 🔋 Mineral Resources for EV Batteries ♻️
 
 Authors: Melanie Bigler | Adrian Imfeld | Emir Odic | Valentin Muller
 
