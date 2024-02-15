@@ -191,15 +191,7 @@ df_filtered = df[((df['scenario'] == scenario_actual) |
                   ((df['year'] == 2022) & (df['scenario'] == 'Baseline'))) &
                  (df['mineral'] == st.session_state.selected_mineral)]
 
-# Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
-yearly_data = df_filtered.groupby('year')['demand'].sum().reset_index()
-
-# Extract the list of years from yearly_data
-years_in_yearly_data = yearly_data['year'].unique()
-
-# Calculate battery production
-demand_2025 = yearly_data.loc[yearly_data['year'] == 2025, 'demand'].values[0]
-demand_2022 = yearly_data.loc[yearly_data['year'] == 2022, 'demand'].values[0]
+# Calculate battery production (mean demand)
 battery_production = df_filtered.loc[:, 'demand'].mean()
 
 # Different new finds rates for each mineral
@@ -250,26 +242,21 @@ mineral_values = InitialValues(**init_values_dict[st.session_state.selected_mine
 
 # Load model with corresponding parameters
 model = BatteryModel(params, mineral_values)
-df_stocks = model.get_stocks_df()
-
-# Filter df_stocks to include only rows where the 'year' is in years_in_yearly_data
-filtered_df_stocks = df_stocks[df_stocks.index.isin(years_in_yearly_data)].reset_index().rename(columns={'index': 'year'})
-
-yearly_data['supply'] = filtered_df_stocks['batteries']
+df_stocks = model.get_stocks_df().reset_index(names='year')
 
 st.write(f'Yearly demand (battery production): {battery_production:.2f} kt')
 
 # Create a Plotly Express figure for both
 col1, col2 = st.columns(2)
 with col1:
-    fig = px.line(filtered_df_stocks, x='year',
-                  y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']],
+    fig = px.line(df_stocks, x='year',
+                  y=[col for col in df_stocks.columns if col not in ['year', 'resources']],
                   range_y=[-max_mineral // 8, max_mineral // 3],
                   title='Stock Values Over Time')
     fig.update_layout(legend_title_text='Variable')
     st.plotly_chart(fig, use_container_width=True)
 with col2:
-    fig = px.line(filtered_df_stocks, x='year', y='resources',
+    fig = px.line(df_stocks, x='year', y='resources',
                   range_y=[-max_mineral // 8, max_mineral * 2],
                   title='Resources Over Time')
     st.plotly_chart(fig, use_container_width=True)
