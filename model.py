@@ -92,7 +92,6 @@ class BatteryModel():
         self.grid_recycling_rate.equation = params.grid_recycling_rate
         self.grid_waste_rate.equation = params.grid_waste_rate
 
-
     def get_stocks_df(self) -> pd.DataFrame:
         stocks = self._get_stocks()
         df = pd.concat([stock.plot(return_df=True) for stock in stocks.values()], axis=1)
