@@ -57,23 +57,17 @@ st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' sce
 
 # Mining value - annual amount of mineral mined (in kt)
 mat_max = {
-    "Lithium": {
-        "resources": 26000.0
-    },
-    "Nickel": {
-        "resources": 100000.0
-    },
-    "Cobalt": {
-        "resources": 8300.0
-    }
+    "Lithium": 26000.0,
+    "Nickel": 100000.0,
+    "Cobalt": 8300.0
 }
 
 mining = st.sidebar.slider(
     "Mining value",
     min_value=0,
-    max_value=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02),
+    max_value=int(mat_max[st.session_state.selected_mineral] // 50),
     value=0,
-    step=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02 / 100),
+    step=int(mat_max[st.session_state.selected_mineral] // 5000),
     format="%gkt",
     help="Annual amount of mineral mined. Try to match the yearly demand of the selected mineral shown on the right. "
          "As you increase recycling and repurpose rates, less mining is required to keep mineral stocks for battery "
