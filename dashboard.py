@@ -1,12 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
-from sklearn.linear_model import LinearRegression
 from model import BatteryModel, Params, InitialValues
-from BPTK_Py import sd_functions as sd
 
 st.set_page_config(layout="wide")
 
