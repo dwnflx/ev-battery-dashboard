@@ -6,7 +6,6 @@ from model import BatteryModel, Params, InitialValues
 
 st.set_page_config(layout="wide")
 
-
 st.title('🔋 EV Battery - simulation with recycling ♻️')
 
 # Rate of new findings for mineral sources per year
@@ -32,7 +31,6 @@ if col2.button('Cobalt'):
 if col3.button('Nickel'):
     st.session_state.selected_mineral = 'Nickel'
 
-
 # Define a mapping between the display format and the dataset format
 scenario_mapping = {
     'Stated Policies': 'Stated policies',
@@ -55,7 +53,6 @@ scenario_actual = scenario_mapping[selected_scenario]
 # Show selection
 st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' scenario")
 
-
 # ==== Parameters ====
 # Create two columns for the parameters
 col_battery, col_grid = st.sidebar.columns(2)
@@ -72,10 +69,9 @@ with col_battery:
         step=1.0,  # Step size, representing 1%
         format="%g%%"  # Display format, showing the value as a percentage
     )
-    
+
     # Convert the slider value back to a fraction
     battery_recycling_rate = battery_recycling_rate_prct / 100.0
-   
 
     # EV Battery Repurpose Rate
     battery_repurpose_rate_prct = st.slider(
@@ -102,7 +98,7 @@ with col_battery:
 
     # Convert the slider value back to a fraction
     battery_waste_rate = battery_waste_rate_prct / 100.0
-    
+
 # Column for Grid parameters
 with col_grid:
     st.header("Grid Parameters")  # Optional: Add a sub-header or text
@@ -118,7 +114,7 @@ with col_grid:
 
     # Convert the slider value back to a fraction
     grid_recycling_rate = grid_recycling_rate_prct / 100.0
-    
+
     # Grid Storage Waste Rate
     grid_waste_rate_prct = st.slider(
         "Grid Storage Waste Rate",
@@ -131,7 +127,6 @@ with col_grid:
 
     # Convert the slider value back to a fraction
     grid_waste_rate = grid_waste_rate_prct / 100.0
-
 
     # Define the mapping of scenarios and minerals to their max reserve percentages, e.g what share of the reserve can be allocated for battery production
     max_values = {
@@ -151,7 +146,7 @@ with col_grid:
             'Lithium': 0.85
         }
     }
-    
+
     # Retrieve the max_value for the current selections
     current_max_value = max_values[selected_scenario][st.session_state.selected_mineral]
 
@@ -171,29 +166,30 @@ with col_grid:
     mining = st.slider(
         "Mining value",
         min_value=0,
-        max_value=int(mat_max[st.session_state.selected_mineral]["resources"]*0.02),
+        max_value=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02),
         value=0,
-        step=int(mat_max[st.session_state.selected_mineral]["resources"]*0.02/100),
+        step=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02 / 100),
         help="Annual amount of mineral mined (in kt)"
     )
-
 
 if battery_waste_rate < 0:
     # Display an error message and stop loading the dashboard
     st.error("Invalid rates selected. Please ensure the combined recycling and repurpose rates do not exceed 100%.")
-    
+
 else:
-    
+
     #######################
     # ==== DASHBOARD ==== #
     #######################
-    
+
     # ==== Stock Values and Resources Over Time ====
     # Load the CSV data for mineral demand
     df = pd.read_csv('data/minerals_demand_long.csv')
 
     # Filter the data based on the scenario and mineral
-    df_filtered = df[((df['scenario'] == scenario_actual) | ((df['year'] == 2022) & (df['scenario'] == 'Baseline'))) & (df['mineral'] == st.session_state.selected_mineral)]
+    df_filtered = df[((df['scenario'] == scenario_actual) |
+                      ((df['year'] == 2022) & (df['scenario'] == 'Baseline'))) &
+                     (df['mineral'] == st.session_state.selected_mineral)]
     
     # Group by 'year' and sum the 'demand' to represent supply (and calculate demand)
     yearly_data = df_filtered.groupby('year')['demand'].sum().reset_index()
@@ -241,7 +237,6 @@ else:
         }
     }
 
-
     mineral_values = InitialValues(**init_values_dict[st.session_state.selected_mineral])
 
     # Load model with corresponding parameters
@@ -252,7 +247,6 @@ else:
     filtered_df_stocks = df_stocks[df_stocks.index.isin(years_in_yearly_data)].reset_index().rename(columns={'index': 'year'})
 
     yearly_data['supply'] = filtered_df_stocks['batteries']
-   
 
     # st.dataframe(filtered_df_stocks)
     st.write(f'Yearly demand (battery production): {battery_production:.2f} kt')
@@ -260,19 +254,20 @@ else:
     # Create a Plotly Express figure for both
     col1, col2 = st.columns(2)
     with col1:
-        fig = px.line(filtered_df_stocks, x='year', y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']], title='Stock Values Over Time')
+        fig = px.line(filtered_df_stocks, x='year',
+                      y=[col for col in filtered_df_stocks.columns if col not in ['year', 'resources']],
+                      title='Stock Values Over Time')
         fig.update_layout(legend_title_text='Variable')
         st.plotly_chart(fig, use_container_width=True)
     with col2:
         fig = px.line(filtered_df_stocks, x='year', y='resources', title='Resources Over Time')
         st.plotly_chart(fig, use_container_width=True)
 
-    
     # Creating the bar chart using Plotly
     fig = go.Figure()
     fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['demand'], name='Demand', marker_color='#0e9c57'))
     fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['supply'], name='Supply', marker_color='#acc2a6'))
-    
+
     # Update layout for a more integrated look
     fig.update_layout(
         plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
@@ -284,33 +279,33 @@ else:
         legend_title="Legend",
         barmode='group'
     )
-    
+
     # Remove white lines and make it more integrated
     fig.update_xaxes(showline=True, linewidth=2, linecolor='black', gridcolor='rgba(0,0,0,0)')
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black', gridcolor='rgba(0,0,0,0)')
-    
+
     # ==== Global Resource Map ====
     # Load the CSV file into a DataFrame
     df_reserves = pd.read_csv('data/Reserves_enriched.csv', sep=';', encoding='utf-8')
 
     # Filter the DataFrame for the selected mineral
     df_selected_mineral = df_reserves[df_reserves['Mineral'] == st.session_state.selected_mineral]
-    
+
     # Creating the global reserves map
-    fig_map = px.scatter_geo(df_selected_mineral, 
-                             lat='Latitude', 
-                             lon='Longitude', 
-                             size='Reserves 2023 (in 1.000 Tons)', 
-                             hover_name='Country', 
-                             projection='natural earth', 
-                             title=f'Global Reserves of {st.session_state.selected_mineral}', 
+    fig_map = px.scatter_geo(df_selected_mineral,
+                             lat='Latitude',
+                             lon='Longitude',
+                             size='Reserves 2023 (in 1.000 Tons)',
+                             hover_name='Country',
+                             projection='natural earth',
+                             title=f'Global Reserves of {st.session_state.selected_mineral}',
                              color_discrete_sequence=["green"])
-    
+
     fig_map.update_layout(
         title={
             'text': f"World Map of {st.session_state.selected_mineral} Reserves (2023)",
-            'y':0.9,
-            'x':0.5,
+            'y': 0.9,
+            'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'
         },
@@ -324,4 +319,3 @@ else:
     )
 
     st.plotly_chart(fig_map, use_container_width=True)
-
