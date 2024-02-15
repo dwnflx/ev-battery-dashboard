@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
 from model import BatteryModel, Params, InitialValues
 
@@ -8,8 +7,6 @@ st.set_page_config(layout="wide")
 
 st.title('🔋 EV Battery - simulation with recycling ♻️')
 
-# Rate of new findings for mineral sources per year
-NEW_FINDS = 0.05
 
 #####################
 # ==== SIDEBAR ==== #
@@ -44,7 +41,11 @@ selected_scenario = st.sidebar.radio(
     "Scenario",
     scenario_display,
     index=0,  # Default is the first option
-    help='Clean energy deployment trends under the Stated Policies Scenario (STEPS), Announced Pledges Scenario (APS) and Net Zero Emissions by 2050 Scenario (NZE) taken from the projections in the World Energy Outlook 2022, complemented by the results in the Energy Technology Perspectives 2023. \n\n The pace of mineral intensity improvements varies by scenario, with the STEPS generally seeing minimal improvement over time as compared to modest improvement (around 10% in the longer term) assumed in the APS.'
+    help='Clean energy deployment trends under the Stated Policies Scenario (STEPS), Announced Pledges Scenario (APS) '
+         'and Net Zero Emissions by 2050 Scenario (NZE) taken from the projections in the World Energy Outlook 2022, '
+         'complemented by the results in the Energy Technology Perspectives 2023. \n\n The pace of mineral intensity '
+         'improvements varies by scenario, with the STEPS generally seeing minimal improvement over time as compared '
+         'to modest improvement (around 10% in the longer term) assumed in the APS.'
 )
 
 # Convert the selected display option back to its dataset format
@@ -261,26 +262,6 @@ with col2:
     fig = px.line(filtered_df_stocks, x='year', y='resources', title='Resources Over Time')
     st.plotly_chart(fig, use_container_width=True)
 
-# Creating the bar chart using Plotly
-fig = go.Figure()
-fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['demand'], name='Demand', marker_color='#0e9c57'))
-fig.add_trace(go.Bar(x=yearly_data['year'], y=yearly_data['supply'], name='Supply', marker_color='#acc2a6'))
-
-# Update layout for a more integrated look
-fig.update_layout(
-    plot_bgcolor='rgba(0,0,0,0)',  # Transparent background
-    paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
-    font_color="#333333",  # Adjust font color to match the dashboard theme
-    title="Yearly Mineral Demand vs. Supply",
-    xaxis_title="Year",
-    yaxis_title="Quantity",
-    legend_title="Legend",
-    barmode='group'
-)
-
-# Remove white lines and make it more integrated
-fig.update_xaxes(showline=True, linewidth=2, linecolor='black', gridcolor='rgba(0,0,0,0)')
-fig.update_yaxes(showline=True, linewidth=2, linecolor='black', gridcolor='rgba(0,0,0,0)')
 
 # ==== Global Resource Map ====
 # Load the CSV file into a DataFrame
