@@ -5,7 +5,7 @@ from model import BatteryModel, Params, InitialValues
 
 st.set_page_config(layout="wide")
 
-st.title('🔋 EV Battery - simulation with recycling ♻️')
+st.title('🔋 Mineral Resources for EV Batteries ♻️')
 
 
 #####################
