@@ -75,8 +75,9 @@ mining = st.sidebar.slider(
     value=0,
     step=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02 / 100),
     format="%gkt",
-    help="Annual amount of mineral mined. Adjust to match the demand of the selected mineral. As recycling and "
-         "repurpose rates are increased, less mining is required to keep mineral stocks for battery production above zero."
+    help="Annual amount of mineral mined. Try to match the yearly demand of the selected mineral shown on the right. "
+         "As you increase recycling and repurpose rates, less mining is required to keep mineral stocks for battery "
+         "production above zero."
 )
 
 # Create two columns for the parameters
