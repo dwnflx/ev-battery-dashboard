@@ -86,7 +86,8 @@ with col_battery:
     st.subheader("EV Battery")  # Optional: Add a sub-header or text
     # EV Battery Recycling Rate
     battery_recycling_rate_prct = st.slider(
-        "EV Battery Recycling Rate",
+        "Recycling Rate",
+        key="battery_recycling_rate",
         min_value=0.0,  # This now represents 0%
         max_value=10.0,  # This now represents 10%
         value=0.0,  # Default value, representing 0%
@@ -99,7 +100,8 @@ with col_battery:
 
     # EV Battery Repurpose Rate
     battery_repurpose_rate_prct = st.slider(
-        "EV Battery Repurpose Rate",
+        "Repurpose Rate",
+        key="battery_repurpose_rate",
         min_value=0.0,  # This now represents 0%
         max_value=10.0,  # This now represents 10%
         value=0.0,  # Default value, representing 0%
@@ -112,7 +114,8 @@ with col_battery:
 
     # EV Battery Waste Rate
     battery_waste_rate_prct = st.slider(
-        "EV Battery Waste Rate",
+        "Waste Rate",
+        key="battery_waste_rate",
         min_value=0.0,  # This now represents 0%
         max_value=10.0,  # This now represents 10%
         value=0.0,  # Default value, representing 0%
@@ -128,7 +131,8 @@ with col_grid:
     st.subheader("Grid Storage")  # Optional: Add a sub-header or text
     # Grid Storage Recycling Rate
     grid_recycling_rate_prct = st.slider(
-        "Grid Storage Recycling Rate",
+        "Recycling Rate",
+        key="grid_recycling_rate",
         min_value=0.0,  # This now represents 0%
         max_value=10.0,  # This now represents 10%
         value=0.0,  # Default value, representing 0%
@@ -141,7 +145,8 @@ with col_grid:
 
     # Grid Storage Waste Rate
     grid_waste_rate_prct = st.slider(
-        "Grid Storage Waste Rate",
+        "Waste Rate",
+        key="grid_waste_rate",
         min_value=0.0,  # This now represents 0%
         max_value=10.0,  # This now represents 10%
         value=0.0,  # Default value, representing 0%
