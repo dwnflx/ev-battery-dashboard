@@ -1,6 +1,5 @@
 numpy==1.26.4
 pandas==2.2.0
 plotly==5.18.0
-scikit-learn==1.4.0
 streamlit==1.31.0
 BPTK-Py==1.9.0
