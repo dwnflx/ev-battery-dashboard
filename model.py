@@ -6,7 +6,6 @@ from dataclasses import dataclass
 
 START_YEAR = 2022
 END_YEAR = 2050
-NEW_FINDS_PERCENT = 0.05
 
 
 @dataclass
@@ -21,6 +20,7 @@ class Params:
     battery_waste_rate: float
     grid_recycling_rate: float
     grid_waste_rate: float
+    new_finds_rate: float
 
 
 # Initial values in kt
@@ -60,6 +60,7 @@ class BatteryModel():
         self.battery_waste_rate = self.model.constant("battery_waste_rate")
         self.grid_recycling_rate = self.model.constant("grid_recycling_rate")
         self.grid_waste_rate = self.model.constant("grid_waste_rate")
+        self.new_finds_rate = self.model.constant("new_finds_rate")
 
         # Stock equations
         self.resources.equation = self.new_finds - self.mining
@@ -68,8 +69,15 @@ class BatteryModel():
         self.grid.equation = self.battery_repurpose - self.grid_recycling - self.grid_waste
         self.waste.equation = self.battery_waste + self.grid_waste
 
+        # Initialization
+        self.resources.initial_value = values.resources
+        self.stocks.initial_value = values.stocks
+        self.batteries.initial_value = values.batteries
+        self.grid.initial_value = values.grid
+        self.waste.initial_value = values.waste
+
         # Flow equations
-        self.new_finds.equation = self.resources.initial_value * NEW_FINDS_PERCENT
+        self.new_finds.equation = self.resources.initial_value * params.new_finds_rate
         self.mining.equation = params.mining
         self.battery_production.equation = params.battery_production
         self.battery_recycling.equation = self.battery_recycling_rate * self.batteries
@@ -78,19 +86,13 @@ class BatteryModel():
         self.grid_recycling.equation = self.grid_recycling_rate * self.grid
         self.grid_waste.equation = self.grid_waste_rate * self.grid
 
-        # Initialization
-        self.resources.initial_value = values.resources
-        self.stocks.initial_value = values.stocks
-        self.batteries.initial_value = values.batteries
-        self.grid.initial_value = values.grid
-        self.waste.initial_value = values.waste
-
         # Constant equations
         self.battery_recycling_rate.equation = params.battery_recycling_rate
         self.battery_repurpose_rate.equation = params.battery_repurpose_rate
         self.battery_waste_rate.equation = params.battery_waste_rate
         self.grid_recycling_rate.equation = params.grid_recycling_rate
         self.grid_waste_rate.equation = params.grid_waste_rate
+        self.new_finds_rate.equation = params.new_finds_rate
 
     def get_stocks_df(self) -> pd.DataFrame:
         stocks = self._get_stocks()
