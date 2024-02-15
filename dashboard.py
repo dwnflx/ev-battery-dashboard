@@ -54,12 +54,36 @@ scenario_actual = scenario_mapping[selected_scenario]
 st.header(f"{st.session_state.selected_mineral} with a '{selected_scenario}' scenario")
 
 # ==== Parameters ====
+
+# Mining value - annual amount of mineral mined (in kt)
+mat_max = {
+    "Lithium": {
+        "resources": 26000.0
+    },
+    "Nickel": {
+        "resources": 100000.0
+    },
+    "Cobalt": {
+        "resources": 8300.0
+    }
+}
+
+mining = st.sidebar.slider(
+    "Mining value",
+    min_value=0,
+    max_value=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02),
+    value=0,
+    step=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02 / 100),
+    format="%gkt",
+    help="Annual amount of mineral mined (in kt)"
+)
+
 # Create two columns for the parameters
 col_battery, col_grid = st.sidebar.columns(2)
 
 # Column for Battery parameters
 with col_battery:
-    st.header("Battery Parameters")  # Optional: Add a sub-header or text
+    st.subheader("EV Battery")  # Optional: Add a sub-header or text
     # EV Battery Recycling Rate
     battery_recycling_rate_prct = st.slider(
         "EV Battery Recycling Rate",
@@ -101,7 +125,7 @@ with col_battery:
 
 # Column for Grid parameters
 with col_grid:
-    st.header("Grid Parameters")  # Optional: Add a sub-header or text
+    st.subheader("Grid Storage")  # Optional: Add a sub-header or text
     # Grid Storage Recycling Rate
     grid_recycling_rate_prct = st.slider(
         "Grid Storage Recycling Rate",
@@ -149,28 +173,6 @@ with col_grid:
 
     # Retrieve the max_value for the current selections
     current_max_value = max_values[selected_scenario][st.session_state.selected_mineral]
-
-    mat_max = {
-        "Lithium": {
-            "resources": 26000.0
-        },
-        "Nickel": {
-            "resources": 100000.0
-        },
-        "Cobalt": {
-            "resources": 8300.0
-        }
-    }
-
-    # Mining value - annual amount of mineral mined (in kt)
-    mining = st.slider(
-        "Mining value",
-        min_value=0,
-        max_value=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02),
-        value=0,
-        step=int(mat_max[st.session_state.selected_mineral]["resources"] * 0.02 / 100),
-        help="Annual amount of mineral mined (in kt)"
-    )
 
 if battery_waste_rate < 0:
     # Display an error message and stop loading the dashboard
