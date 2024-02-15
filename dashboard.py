@@ -67,7 +67,7 @@ mat_max_selected = mat_max[st.session_state.selected_mineral]
 mining = st.sidebar.slider(
     "Mining value",
     min_value=0,
-    max_value=mat_max_selected // 50,
+    max_value=mat_max_selected // 25,
     value=0,
     step=mat_max_selected // 5000,
     format="%gkt",
