@@ -4,6 +4,8 @@ Authors: Melanie Bigler | Adrian Imfeld | Emir Odic | Valentin Muller
 
 This project has been realized in the "Sustainability Analytics" seminar at Lucerne University of Applied Sciences and Arts (HSLU) in February 2024.
 
+Live URL: https://ev-battery-dashboard.streamlit.app/
+
 For details on the project, please refer to the project report.
 
 ## User Interface
