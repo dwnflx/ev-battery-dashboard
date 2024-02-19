@@ -15,11 +15,11 @@ class Params:
     mining: float
 
     # Rates between 0 and 1
+    battery_eol_rate: float
     battery_recycling_rate: float
     battery_repurpose_rate: float
-    battery_waste_rate: float
+    grid_eol_rate: float
     grid_recycling_rate: float
-    grid_waste_rate: float
     new_finds_rate: float
 
 
@@ -80,18 +80,18 @@ class BatteryModel():
         self.new_finds.equation = self.resources.initial_value * params.new_finds_rate
         self.mining.equation = params.mining
         self.battery_production.equation = params.battery_production
-        self.battery_recycling.equation = self.battery_recycling_rate * self.batteries
-        self.battery_repurpose.equation = self.battery_repurpose_rate * self.batteries
-        self.battery_waste.equation = self.battery_waste_rate * self.batteries
-        self.grid_recycling.equation = self.grid_recycling_rate * self.grid
-        self.grid_waste.equation = self.grid_waste_rate * self.grid
+        self.battery_recycling.equation = self.battery_recycling_rate * params.battery_eol_rate * self.batteries
+        self.battery_repurpose.equation = self.battery_repurpose_rate * params.battery_eol_rate * self.batteries
+        self.battery_waste.equation = self.battery_waste_rate * params.battery_eol_rate * self.batteries
+        self.grid_recycling.equation = self.grid_recycling_rate * params.grid_eol_rate * self.grid
+        self.grid_waste.equation = self.grid_waste_rate * params.grid_eol_rate * self.grid
 
         # Constant equations
         self.battery_recycling_rate.equation = params.battery_recycling_rate
         self.battery_repurpose_rate.equation = params.battery_repurpose_rate
-        self.battery_waste_rate.equation = params.battery_waste_rate
+        self.battery_waste_rate.equation = 1 - params.battery_recycling_rate - params.battery_repurpose_rate
         self.grid_recycling_rate.equation = params.grid_recycling_rate
-        self.grid_waste_rate.equation = params.grid_waste_rate
+        self.grid_waste_rate.equation = 1 - params.grid_recycling_rate
         self.new_finds_rate.equation = params.new_finds_rate
 
     def get_stocks_df(self) -> pd.DataFrame:

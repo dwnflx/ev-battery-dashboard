@@ -82,78 +82,70 @@ col_battery, col_grid = st.sidebar.columns(2)
 # Column for Battery parameters
 with col_battery:
     st.subheader("EV Battery")  # Optional: Add a sub-header or text
+
+    # EV Battery End of Life Rate
+    battery_eol_rate = st.slider(
+        "End of Life Rate",
+        key="battery_eol_rate",
+        min_value=0.0,
+        max_value=10.0,
+        value=1.0,
+        step=0.5,
+        format="%g%%",
+        help="Annual percentage of batteries that reach their end of life and are no longer usable in EVs. They will be "
+             "recycled, repurposed for use in grid storage, or go to waste."
+    )
+
     # EV Battery Recycling Rate
-    battery_recycling_rate_prct = st.slider(
+    battery_recycling_rate = st.slider(
         "Recycling Rate",
         key="battery_recycling_rate",
-        min_value=0.0,  # This now represents 0%
-        max_value=10.0,  # This now represents 10%
-        value=0.0,  # Default value, representing 0%
-        step=1.0,  # Step size, representing 1%
-        format="%g%%"  # Display format, showing the value as a percentage
+        min_value=0.0,
+        max_value=50.0,
+        value=0.0,
+        step=1.0,
+        format="%g%%"
     )
-
-    # Convert the slider value back to a fraction
-    battery_recycling_rate = battery_recycling_rate_prct / 100.0
 
     # EV Battery Repurpose Rate
-    battery_repurpose_rate_prct = st.slider(
+    battery_repurpose_rate = st.slider(
         "Repurpose Rate",
         key="battery_repurpose_rate",
-        min_value=0.0,  # This now represents 0%
-        max_value=10.0,  # This now represents 10%
-        value=0.0,  # Default value, representing 0%
-        step=1.0,  # Step size, representing 1%
-        format="%g%%"  # Display format, showing the value as a percentage
+        min_value=0.0,
+        max_value=50.0,
+        value=0.0,
+        step=1.0,
+        format="%g%%"
     )
 
-    # Convert the slider value back to a fraction
-    battery_repurpose_rate = battery_repurpose_rate_prct / 100.0
-
-    # EV Battery Waste Rate
-    battery_waste_rate_prct = st.slider(
-        "Waste Rate",
-        key="battery_waste_rate",
-        min_value=0.0,  # This now represents 0%
-        max_value=10.0,  # This now represents 10%
-        value=0.0,  # Default value, representing 0%
-        step=1.0,  # Step size, representing 1%
-        format="%g%%"  # Display format, showing the value as a percentage
-    )
-
-    # Convert the slider value back to a fraction
-    battery_waste_rate = battery_waste_rate_prct / 100.0
 
 # Column for Grid parameters
 with col_grid:
     st.subheader("Grid Storage")  # Optional: Add a sub-header or text
+
+    # Grid Storage End of Life Rate
+    grid_eol_rate = st.slider(
+        "End of Life Rate",
+        key="grid_eol_rate",
+        min_value=0.0,
+        max_value=10.0,
+        value=1.0,
+        step=0.5,
+        format="%g%%",
+        help="Annual percentage of batteries that reach their end of life and are no longer usable for grid storage. "
+             "They will be recycled or go to waste."
+    )
+
     # Grid Storage Recycling Rate
-    grid_recycling_rate_prct = st.slider(
+    grid_recycling_rate = st.slider(
         "Recycling Rate",
         key="grid_recycling_rate",
-        min_value=0.0,  # This now represents 0%
-        max_value=10.0,  # This now represents 10%
-        value=0.0,  # Default value, representing 0%
-        step=1.0,  # Step size, representing 1%
-        format="%g%%"  # Display format, showing the value as a percentage
+        min_value=0.0,
+        max_value=50.0,
+        value=0.0,
+        step=1.0,
+        format="%g%%"
     )
-
-    # Convert the slider value back to a fraction
-    grid_recycling_rate = grid_recycling_rate_prct / 100.0
-
-    # Grid Storage Waste Rate
-    grid_waste_rate_prct = st.slider(
-        "Waste Rate",
-        key="grid_waste_rate",
-        min_value=0.0,  # This now represents 0%
-        max_value=10.0,  # This now represents 10%
-        value=0.0,  # Default value, representing 0%
-        step=1.0,  # Step size, representing 1%
-        format="%g%%"  # Display format, showing the value as a percentage
-    )
-
-    # Convert the slider value back to a fraction
-    grid_waste_rate = grid_waste_rate_prct / 100.0
 
     # Define the mapping of scenarios and minerals to their max reserve percentages, e.g what share of the reserve can be allocated for battery production
     mineral_allocations = {
@@ -205,12 +197,12 @@ new_finds_rate = new_finds_rates[st.session_state.selected_mineral]
 params = Params(
     mining=mining,
     battery_production=battery_production,
-    battery_recycling_rate=battery_recycling_rate,
-    battery_repurpose_rate=battery_repurpose_rate,
-    battery_waste_rate=battery_waste_rate,
-    grid_recycling_rate=grid_recycling_rate,
-    grid_waste_rate=grid_waste_rate,
-    new_finds_rate=new_finds_rate
+    battery_eol_rate=battery_eol_rate / 100.0,
+    battery_recycling_rate=battery_recycling_rate / 100.0,
+    battery_repurpose_rate=battery_repurpose_rate / 100.0,
+    grid_eol_rate=grid_eol_rate / 100.0,
+    grid_recycling_rate=grid_recycling_rate / 100.0,
+    new_finds_rate=new_finds_rate / 100.0
 )
 
 # Initialize values per mineral - adapt with help of 'mineral_allocation' to reflect the true share depending on scenario/mineral chosen
