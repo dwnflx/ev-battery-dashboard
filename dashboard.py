@@ -93,7 +93,7 @@ with col_battery:
         step=0.5,
         format="%g%%",
         help="Annual percentage of batteries that reach their end of life and are no longer usable in EVs. They will be "
-             "recycled, repurposed for use in grid storage, or go to waste."
+             "recycled or repurposed for use in grid storage, and the rest will to waste."
     )
 
     # EV Battery Recycling Rate
@@ -133,7 +133,7 @@ with col_grid:
         step=0.5,
         format="%g%%",
         help="Annual percentage of batteries that reach their end of life and are no longer usable for grid storage. "
-             "They will be recycled or go to waste."
+             "They will be recycled according to the recycling rate, and the rest will go to waste."
     )
 
     # Grid Storage Recycling Rate
