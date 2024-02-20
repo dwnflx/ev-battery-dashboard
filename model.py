@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from BPTK_Py import Model
 from BPTK_Py.sddsl import Stock
 
@@ -36,6 +37,7 @@ class InitialValues:
 class BatteryModel():
     def __init__(self, params: Params, values: InitialValues):
         self.model = Model(starttime=START_YEAR, stoptime=END_YEAR, dt=1, name='EV battery model')
+        self.params = params
 
         # Stocks
         self.resources = self.model.stock("resources")
@@ -98,7 +100,33 @@ class BatteryModel():
         stocks = self._get_stocks()
         df = pd.concat([stock.plot(return_df=True) for stock in stocks.values()], axis=1)
         df.index = df.index.astype(int)
+        df.index.name = "year"
         return df
+
+    def get_warnings(self) -> list[str]:
+        df = self.get_stocks_df()
+        warnings = []
+
+        if (negative_stocks_year := df[df['stocks'] < 0].index.min()) and not np.isnan(negative_stocks_year):
+            warnings.append(f"Stocks become negative in {negative_stocks_year}.")
+
+        if (negative_resources_year := df[df['resources'] < 0].index.min()) and not np.isnan(negative_resources_year):
+            warnings.append(f"You run out of resources in {negative_resources_year}.")
+
+        mining_percent = int(self.params.mining / self.params.battery_production * 100)
+        MINING_PERCENT_THRESHOLD = 90
+        if mining_percent > MINING_PERCENT_THRESHOLD:
+            warnings.append(f"You cover {mining_percent}% of the yearly demand by mining, try to mine no more "
+                            f"than {MINING_PERCENT_THRESHOLD}% of the demand.")
+
+        waste_percent = int(df['waste'].max() / df['batteries'].max() * 100)
+        WASTE_PERCENT_THRESHOLD = 20
+        if waste_percent > WASTE_PERCENT_THRESHOLD:
+            warnings.append(f"You end up with {waste_percent}% waste compared to the batteries produced, try to decrease "
+                            f"waste to no more than {WASTE_PERCENT_THRESHOLD}%.")
+
+        return warnings
+
 
     def _get_stocks(self) -> dict[str, Stock]:
         return {
@@ -108,3 +136,4 @@ class BatteryModel():
             "grid": self.grid,
             "waste": self.waste
         }
+

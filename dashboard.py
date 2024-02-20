@@ -253,6 +253,13 @@ with col2:
                   title='Resources Over Time')
     st.plotly_chart(fig, use_container_width=True)
 
+# ==== Warnings ====
+for warning in (warnings := model.get_warnings()):
+    st.warning(warning, icon="⚠️")
+
+if not warnings:
+    st.success(f"We have a enough {st.session_state.selected_mineral} for the '{selected_scenario}' scenario.", icon="👍")
+
 
 # ==== Global Resource Map ====
 # Load the CSV file into a DataFrame
@@ -289,3 +296,4 @@ fig_map.update_layout(
 )
 
 st.plotly_chart(fig_map, use_container_width=True)
+
