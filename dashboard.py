@@ -258,7 +258,7 @@ for warning in (warnings := model.get_warnings()):
     st.warning(warning, icon="⚠️")
 
 if not warnings:
-    st.success(f"We have a enough {st.session_state.selected_mineral} for the '{selected_scenario}' scenario.", icon="👍")
+    st.success(f"We have a sustainable solution for {st.session_state.selected_mineral} in the '{selected_scenario}' scenario until 2050.", icon="👍")
 
 
 # ==== Global Resource Map ====
