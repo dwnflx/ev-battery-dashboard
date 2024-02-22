@@ -6,7 +6,7 @@ This project has been realized in the "Sustainability Analytics" seminar at Luce
 
 Live URL: https://ev-battery-dashboard.streamlit.app/
 
-For details on the project, please refer to the project report.
+For details on the project, please refer to the project report 'Interactive Simulation App for Sustainable Management of Mineral Resources for EV Batteries' (Version: 2024-02-22)
 
 ## User Interface
 
